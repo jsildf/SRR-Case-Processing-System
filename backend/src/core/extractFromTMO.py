@@ -246,7 +246,7 @@ def extract_slope_no_from_form_ref(content: str) -> str:
     
     # 模式1: 11SW-B/F199(0) 和 11SW-B/F199 多个结果用 & 连接
     slope_patterns = [
-        r'\b(\d+[A-Z]+-[A-Z]+/[A-Z]+\d+(?:\(\d+\))?)\b'  # 11SW-B/F199(0) 11SW-B/F199匹配带不带括号的版本
+        r'\b(\d+[A-Z]+-[A-Z]+/[A-Z]+\d+(?:\(\d+\))?)(?![\(\w]) '# 11SW-B/F199(0) 11SW-B/F199匹配带不带括号的版本
     ]
 
     all_slope_numbers = []
@@ -333,7 +333,7 @@ def clean_slope_number_tmo(slope_text: str) -> str:
     cleaned = re.sub(r'[#\s]+', '', slope_text.strip())
     
     # 只保留字母、数字、连字符和斜杠
-    cleaned = re.sub(r'[^A-Z0-9\-/]', '', cleaned.upper())
+    cleaned = re.sub(r'[^A-Z0-9\-/()]', '', cleaned.upper())
     
     # 修正OCRerror
     if cleaned.startswith('LSW') or cleaned.startswith('ISW') or cleaned.startswith('JSW'):
@@ -455,20 +455,12 @@ def extract_case_data_from_pdf(pdf_path: str) -> Dict[str, Any]:
     result['G_slope_no'] = extract_slope_no_from_form_ref(content)
     if not content:
         print("⚠️ 无法extractPDFtext content")
-        return _get_empty_result()
-    
+
     # 处理完slope_no返回
     if result:
         return result
-    
-    # 备用方法：使用传统OCR提取
-    logger.info("📄 使用传统OCR方法提取PDF内容...")
-    content = extract_text_from_pdf_fast(pdf_path)
-    
-    if not content:
-        logger.warning("⚠️ 无法extractPDFtext content")
-        return _get_empty_result()
-    
+
+    #如果result为空，继续进行其他字段的提取
     # 初始化结果字典
     result = {}
     
