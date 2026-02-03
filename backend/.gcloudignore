@@ -1,0 +1,26 @@
+# Environment files
+.env
+.env.*
+*.env
+
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# IDEs
+.vscode/
+.idea/
+
+# Documentation
+docs/
+*.md
+
+# Database
+*.db
